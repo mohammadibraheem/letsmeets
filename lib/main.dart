@@ -15,13 +15,14 @@ class ReservationApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Reservation App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => CompanyNamePage(),
+        '/': (context) => const CompanyNamePage(),
         '/signup': (context) => const SignupPage(),
         '/home': (context) => const HomePage(),
         '/reservation': (context) => const ReservationPage(),

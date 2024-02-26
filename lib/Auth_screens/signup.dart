@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SignupPage extends StatefulWidget {
-  const SignupPage({super.key});
+  const SignupPage({Key? key}) : super(key: key);
 
   @override
   _SignupPageState createState() => _SignupPageState();
@@ -14,6 +14,7 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _reEnterPasswordController =
       TextEditingController();
+  bool _agreeToTerms = false;
 
   void _submitForm() {
     if (_passwordController.text != _reEnterPasswordController.text) {
@@ -36,7 +37,29 @@ class _SignupPageState extends State<SignupPage> {
       );
       return;
     }
-    //after submit
+
+    if (!_agreeToTerms) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Error"),
+            content: const Text("Please agree to the terms and conditions"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+
+    // After form submission logic
     Navigator.pushReplacementNamed(context, '/login');
   }
 
@@ -45,6 +68,8 @@ class _SignupPageState extends State<SignupPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign Up'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -53,34 +78,93 @@ class _SignupPageState extends State<SignupPage> {
           children: [
             TextFormField(
               controller: _emailController,
-              decoration: const InputDecoration(
-                  labelText: 'Email Address'), //must use email format
+              decoration: InputDecoration(
+                labelText: 'Email Address',
+                prefixIcon: const Icon(Icons.email),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+              ),
             ),
+            const SizedBox(height: 20),
             TextFormField(
               controller: _usernameController,
-              decoration: const InputDecoration(
-                  labelText: 'Username'), //check for avalability
+              decoration: InputDecoration(
+                labelText: 'Username',
+                prefixIcon: const Icon(Icons.person),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+              ),
             ),
+            const SizedBox(height: 20),
             TextFormField(
               controller: _phoneNumberController,
-              decoration: const InputDecoration(
-                  labelText:
-                      'Phone Number'), // must take only numbers and limitation
+              decoration: InputDecoration(
+                labelText: 'Phone Number',
+                prefixIcon: const Icon(Icons.phone),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+              ),
             ),
+            const SizedBox(height: 20),
             TextFormField(
               controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
+              decoration: InputDecoration(
+                labelText: 'Password',
+                prefixIcon: const Icon(Icons.lock),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+              ),
               obscureText: true,
             ),
+            const SizedBox(height: 20),
             TextFormField(
               controller: _reEnterPasswordController,
-              decoration: const InputDecoration(labelText: 'Re-enter Password'),
+              decoration: InputDecoration(
+                labelText: 'Re-enter Password',
+                prefixIcon: const Icon(Icons.lock),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+              ),
               obscureText: true,
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Checkbox(
+                  value: _agreeToTerms,
+                  onChanged: (value) {
+                    setState(() {
+                      _agreeToTerms = value!;
+                    });
+                  },
+                ),
+                const Text('I agree to the terms and conditions'),
+              ],
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _submitForm,
-              child: const Text('Submit'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+              ),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+                child: Text(
+                  'Submit',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
           ],
         ),

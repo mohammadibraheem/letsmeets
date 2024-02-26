@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -44,22 +45,39 @@ class _ReservationPageState extends State<ReservationPage> {
           // Dropdown to select meeting room
           Padding(
             padding: const EdgeInsets.all(20.0),
-            child: DropdownButton<String>(
-              value: selectedMeetingRoom,
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedMeetingRoom = newValue!;
-                });
-              },
-              items: meetingRooms.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.3),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: DropdownButton<String>(
+                value: selectedMeetingRoom,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedMeetingRoom = newValue!;
+                  });
+                },
+                items:
+                    meetingRooms.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
             ),
           ),
           TableCalendar(
+            //calendarController: _calendarController,
             focusedDay: _focusedDay,
             firstDay: _firstDay,
             lastDay: _lastDay,
@@ -69,8 +87,16 @@ class _ReservationPageState extends State<ReservationPage> {
             headerStyle: const HeaderStyle(
               formatButtonVisible: false,
             ),
-            calendarStyle: const CalendarStyle(
-              weekendTextStyle: TextStyle(color: Colors.red),
+            calendarStyle: CalendarStyle(
+              todayDecoration: BoxDecoration(
+                color: Colors.blue.withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+              selectedDecoration: BoxDecoration(
+                color: Colors.blue.withOpacity(0.4),
+                shape: BoxShape.circle,
+              ),
+              weekendTextStyle: const TextStyle(color: Colors.red),
             ),
             daysOfWeekStyle: const DaysOfWeekStyle(
               weekendStyle: TextStyle(color: Colors.red),
@@ -80,13 +106,12 @@ class _ReservationPageState extends State<ReservationPage> {
               DateTime.friday,
               DateTime.saturday
             ], // Define Fri and Sat as weekend days
-            calendarBuilders: const CalendarBuilders(),
             availableCalendarFormats: const {
               CalendarFormat.month: 'Month',
               CalendarFormat.week: 'Week',
             },
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 20, width: 20),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Text(
@@ -105,8 +130,10 @@ class _ReservationPageState extends State<ReservationPage> {
                   onTap: () {
                     final selectedDate = _calendarController.selectedDay;
                     final selectedTime = TimeOfDay(hour: hour, minute: 0);
-                    print(
-                        'Selected Date: $selectedDate, Selected Time: $selectedTime');
+                    if (kDebugMode) {
+                      print(
+                          'Selected Date: $selectedDate, Selected Time: $selectedTime');
+                    }
                   },
                 );
               },
@@ -127,7 +154,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
