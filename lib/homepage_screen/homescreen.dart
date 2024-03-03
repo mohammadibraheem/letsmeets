@@ -4,25 +4,55 @@ import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      appBar: MyAppBar(
+        title: 'Home',
+      ),
+      floatingActionButton: AddNewReservation(),
+      body: MeetingRoomList(),
+    );
+  }
+}
+
+class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final String title;
+
+  const MyAppBar({
+    super.key,
+    //Key? key,
+    required this.title,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      title: Text(title),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
+
+class AddNewReservation extends StatelessWidget {
+  const AddNewReservation({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {
-          Navigator.pushNamed(
-              context, '/reservation'); // Navigate to ReservationPage
-        },
-      ),
-      body: const MeetingRoomList(),
+    return FloatingActionButton(
+      child: const Icon(Icons.calendar_month),
+      onPressed: () {
+        Navigator.pushNamed(context, '/reservation');
+      },
     );
   }
 }
@@ -37,9 +67,11 @@ class MeetingRoomList extends StatefulWidget {
 }
 
 class _MeetingRoomListState extends State<MeetingRoomList> {
-  bool room1Selected = false;
-  bool room2Selected = false;
   List<String> meetingRooms = ['Room 1', 'Room 2'];
+  Map<String, bool> roomSelections = {
+    'Room 1': false,
+    'Room 2': false,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -53,11 +85,7 @@ class _MeetingRoomListState extends State<MeetingRoomList> {
         ),
         const SizedBox(height: 10.0),
         ...meetingRooms.map((room) {
-          bool isSelected = room == 'Room 1'
-              ? room1Selected
-              : room == 'Room 2'
-                  ? room2Selected
-                  : false;
+          bool isSelected = roomSelections[room] ?? false;
           return RoomCard(
             roomName: room,
             roomDescription: 'The description of $room',
@@ -72,7 +100,7 @@ class _MeetingRoomListState extends State<MeetingRoomList> {
             _addNewRoom(context);
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue,
+            backgroundColor: const Color.fromARGB(255, 227, 225, 225),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30.0),
             ),
@@ -123,20 +151,17 @@ class _MeetingRoomListState extends State<MeetingRoomList> {
       context: context,
       builder: (BuildContext context) {
         return MinutesDialog(
-            key: UniqueKey(),
-            roomName: roomName,
-            onSelected: _onMinutesSelected);
+          roomName: roomName,
+          onSelected: _onMinutesSelected,
+        );
       },
     );
   }
 
   void _onMinutesSelected(String roomName, int minutes) {
     setState(() {
-      if (roomName == 'Room 1') {
-        room1Selected = true;
-        _startCountdownTimer(roomName, minutes);
-      } else if (roomName == 'Room 2') {
-        room2Selected = true;
+      if (meetingRooms.contains(roomName)) {
+        roomSelections[roomName] = true;
         _startCountdownTimer(roomName, minutes);
       }
     });
@@ -145,11 +170,7 @@ class _MeetingRoomListState extends State<MeetingRoomList> {
   void _startCountdownTimer(String roomName, int minutes) {
     Timer(Duration(minutes: minutes), () {
       setState(() {
-        if (roomName == 'Room 1') {
-          room1Selected = false;
-        } else if (roomName == 'Room 2') {
-          room2Selected = false;
-        }
+        roomSelections[roomName] = false;
       });
     });
   }
@@ -158,6 +179,7 @@ class _MeetingRoomListState extends State<MeetingRoomList> {
     String newRoomName = 'New Room ${meetingRooms.length + 1}';
     setState(() {
       meetingRooms.add(newRoomName);
+      roomSelections[newRoomName] = false;
     });
   }
 }
@@ -166,9 +188,11 @@ class MinutesDialog extends StatelessWidget {
   final String roomName;
   final Function(String, int) onSelected;
 
-  const MinutesDialog(
-      {required Key key, required this.roomName, required this.onSelected})
-      : super(key: key);
+  const MinutesDialog({
+    super.key,
+    required this.roomName,
+    required this.onSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -224,27 +248,30 @@ class RoomCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const RoomCard({
-    Key? key,
+    super.key,
     required this.roomName,
     required this.roomDescription,
     required this.selected,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
         margin: const EdgeInsets.symmetric(vertical: 8.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.0),
-          color: selected ? Colors.blueAccent.withOpacity(0.8) : Colors.white,
+          color: selected
+              ? const Color.fromARGB(255, 132, 172, 241).withOpacity(0.8)
+              : Colors.white,
           boxShadow: [
             BoxShadow(
               color: selected
-                  ? Colors.blueAccent.withOpacity(0.4)
-                  : Colors.grey.withOpacity(0.2),
+                  ? const Color.fromARGB(255, 102, 156, 249).withOpacity(0.4)
+                  : const Color.fromARGB(255, 202, 199, 199).withOpacity(0.2),
               spreadRadius: 2,
               blurRadius: 8,
               offset: const Offset(0, 4),
@@ -260,11 +287,15 @@ class RoomCard extends StatelessWidget {
                 height: 60,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: selected ? Colors.white : Colors.blueAccent,
+                  color: selected
+                      ? const Color.fromARGB(255, 132, 216, 203)
+                      : const Color.fromARGB(255, 133, 251, 157),
                 ),
                 child: Icon(
                   Icons.meeting_room,
-                  color: selected ? Colors.blueAccent : Colors.white,
+                  color: selected
+                      ? const Color.fromARGB(255, 211, 223, 245)
+                      : const Color.fromARGB(255, 49, 49, 49),
                   size: 36,
                 ),
               ),
@@ -287,8 +318,9 @@ class RoomCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14,
                         color: selected
-                            ? Colors.white.withOpacity(0.8)
-                            : Colors.black87,
+                            ? const Color.fromARGB(255, 4, 4, 4)
+                                .withOpacity(0.8)
+                            : const Color.fromARGB(221, 0, 0, 0),
                       ),
                     ),
                   ],
@@ -302,13 +334,13 @@ class RoomCard extends StatelessWidget {
                 child: selected
                     ? Icon(
                         Icons.check_circle,
-                        color: Colors.green,
+                        color: const Color.fromARGB(255, 148, 19, 10),
                         size: 24,
                         key: UniqueKey(),
                       )
                     : Icon(
                         Icons.circle,
-                        color: Colors.grey,
+                        color: const Color.fromARGB(255, 24, 121, 9),
                         size: 24,
                         key: UniqueKey(),
                       ),
