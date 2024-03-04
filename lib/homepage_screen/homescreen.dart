@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({
@@ -33,6 +34,17 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: Text(title),
       backgroundColor: Colors.transparent,
+      actions: [
+        IconButton(
+            onPressed: () {
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil('/login', (route) => false);
+            },
+            icon: const Icon(
+              Icons.logout,
+              color: Colors.black,
+            ))
+      ],
       elevation: 0,
     );
   }
@@ -78,9 +90,10 @@ class _MeetingRoomListState extends State<MeetingRoomList> {
     return ListView(
       padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
       children: [
-        const Text(
+        Text(
           'Meeting Rooms',
-          style: TextStyle(fontSize: 20.0, color: Colors.blueGrey),
+          style: GoogleFonts.dancingScript(
+              fontSize: 40.0, color: Colors.black, fontStyle: FontStyle.italic),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 10.0),
@@ -105,7 +118,10 @@ class _MeetingRoomListState extends State<MeetingRoomList> {
               borderRadius: BorderRadius.circular(30.0),
             ),
           ),
-          child: const Text('Add New Room'),
+          child: const Text(
+            'Add New Room',
+            style: TextStyle(color: Colors.black),
+          ),
         ),
       ],
     );

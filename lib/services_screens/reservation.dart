@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class ReservationPage extends StatefulWidget {
@@ -22,6 +24,7 @@ class _ReservationPageState extends State<ReservationPage> {
     'Meeting Room 3'
   ];
   String selectedMeetingRoom = 'Meeting Room 1';
+  DateTime? selectedDate;
 
   @override
   void initState() {
@@ -76,40 +79,71 @@ class _ReservationPageState extends State<ReservationPage> {
               ),
             ),
           ),
-          TableCalendar(
-            //calendarController: _calendarController,
-            focusedDay: _focusedDay,
-            firstDay: _firstDay,
-            lastDay: _lastDay,
-            calendarFormat: CalendarFormat.month,
-            onFormatChanged: (format) {},
-            startingDayOfWeek: StartingDayOfWeek.sunday,
-            headerStyle: const HeaderStyle(
-              formatButtonVisible: false,
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.width * 1.2,
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(12)),
+                    width: MediaQuery.of(context).size.width * 0.95,
+                    height: MediaQuery.of(context).size.width * 0.95,
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.center,
+                  child: TableCalendar(
+                    //calendarController: _calendarController,
+                    focusedDay: _focusedDay,
+                    firstDay: _firstDay,
+                    lastDay: _lastDay,
+                    calendarFormat: CalendarFormat.month,
+                    onFormatChanged: (format) {},
+                    startingDayOfWeek: StartingDayOfWeek.sunday,
+                    headerStyle: const HeaderStyle(
+                      formatButtonVisible: false,
+                    ),
+                    selectedDayPredicate: (day) {
+                      return isSameDay(selectedDate, day);
+                    },
+                    onDaySelected: (selectedDay, focusedDay) {
+                      setState(() {
+                        selectedDate = selectedDay;
+                      });
+                    },
+
+                    calendarStyle: CalendarStyle(
+                      tablePadding: const EdgeInsets.all(20),
+                      todayDecoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.2),
+                        shape: BoxShape.circle,
+                      ),
+                      selectedDecoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.4),
+                        shape: BoxShape.circle,
+                      ),
+                      weekendTextStyle: const TextStyle(color: Colors.red),
+                    ),
+                    daysOfWeekStyle: const DaysOfWeekStyle(
+                      weekendStyle: TextStyle(color: Colors.red),
+                      weekdayStyle: TextStyle(color: Colors.black),
+                    ),
+                    weekendDays: const [
+                      DateTime.friday,
+                      DateTime.saturday
+                    ], // Define Fri and Sat as weekend days
+                    availableCalendarFormats: const {
+                      CalendarFormat.month: 'Month',
+                      CalendarFormat.week: 'Week',
+                    },
+                  ),
+                ),
+              ],
             ),
-            calendarStyle: CalendarStyle(
-              todayDecoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.2),
-                shape: BoxShape.circle,
-              ),
-              selectedDecoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.4),
-                shape: BoxShape.circle,
-              ),
-              weekendTextStyle: const TextStyle(color: Colors.red),
-            ),
-            daysOfWeekStyle: const DaysOfWeekStyle(
-              weekendStyle: TextStyle(color: Colors.red),
-              weekdayStyle: TextStyle(color: Colors.black),
-            ),
-            weekendDays: const [
-              DateTime.friday,
-              DateTime.saturday
-            ], // Define Fri and Sat as weekend days
-            availableCalendarFormats: const {
-              CalendarFormat.month: 'Month',
-              CalendarFormat.week: 'Week',
-            },
           ),
           const SizedBox(height: 20, width: 20),
           const Padding(
@@ -120,13 +154,25 @@ class _ReservationPageState extends State<ReservationPage> {
             ),
           ),
           const SizedBox(height: 10),
-          Expanded(
-            child: ListView.builder(
-              itemCount: 12,
+          SizedBox(
+            height: 60,
+            child: ListView.separated(
+              separatorBuilder: (context, index) {
+                return const SizedBox(
+                  width: 10,
+                );
+              },
+              itemCount: 10,
+              scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
                 final hour = index + 8;
-                return ListTile(
-                  title: Text('${hour % 12}:00 ${hour < 12 ? 'AM' : 'PM'}'),
+                return GestureDetector(
+                  child: Container(
+                      decoration: const BoxDecoration(
+                          color: Colors.blue, shape: BoxShape.circle),
+                      height: 55,
+                      width: 55,
+                      child: Center(child: Text('$hour :00'))),
                   onTap: () {
                     final selectedDate = _calendarController.selectedDay;
                     final selectedTime = TimeOfDay(hour: hour, minute: 0);

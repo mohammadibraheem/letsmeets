@@ -64,7 +64,7 @@ class _CompanyNamePageState extends State<CompanyNamePage> {
             ),
             const SizedBox(height: 20.0),
             _isLoading
-                ? const CircularProgressIndicator() // Show progress indicator while processing
+                ? const CircularProgressIndicator.adaptive() // Show progress indicator while processing
                 : ElevatedButton(
                     onPressed: _submitForm,
                     style: ElevatedButton.styleFrom(
