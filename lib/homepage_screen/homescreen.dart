@@ -3,6 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+void main() {
+  runApp(const MaterialApp(
+    home: HomePage(),
+  ));
+}
+
 class HomePage extends StatelessWidget {
   const HomePage({
     Key? key,
@@ -24,26 +30,35 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
 
   const MyAppBar({
-    super.key,
-    //Key? key,
+    Key? key,
     required this.title,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(title),
+      toolbarHeight: 120,
+      shadowColor: const Color.fromARGB(255, 7, 161, 222),
+      title: Text(
+        title,
+        style: const TextStyle(
+          color: Colors.black,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
       backgroundColor: Colors.transparent,
       actions: [
         IconButton(
-            onPressed: () {
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil('/login', (route) => false);
-            },
-            icon: const Icon(
-              Icons.logout,
-              color: Colors.black,
-            ))
+          onPressed: () {
+            Navigator.of(context)
+                .pushNamedAndRemoveUntil('/login', (route) => false);
+          },
+          icon: const Icon(
+            Icons.logout,
+            color: Colors.black,
+          ),
+        )
       ],
       elevation: 0,
     );
@@ -55,8 +70,8 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
 
 class AddNewReservation extends StatelessWidget {
   const AddNewReservation({
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -71,10 +86,11 @@ class AddNewReservation extends StatelessWidget {
 
 class MeetingRoomList extends StatefulWidget {
   const MeetingRoomList({
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _MeetingRoomListState createState() => _MeetingRoomListState();
 }
 
@@ -93,19 +109,60 @@ class _MeetingRoomListState extends State<MeetingRoomList> {
         Text(
           'Meeting Rooms',
           style: GoogleFonts.dancingScript(
-              fontSize: 40.0, color: Colors.black, fontStyle: FontStyle.italic),
+            fontSize: 40.0,
+            color: Colors.black,
+            fontStyle: FontStyle.italic,
+          ),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 10.0),
         ...meetingRooms.map((room) {
           bool isSelected = roomSelections[room] ?? false;
-          return RoomCard(
-            roomName: room,
-            roomDescription: 'The description of $room',
-            selected: isSelected,
-            onTap: () {
-              _showOptions(context, room);
+          return Dismissible(
+            key: Key(room),
+            background: Container(
+              color: Colors.red,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: 20.0),
+              child: const Row(
+                children: [
+                  SizedBox(width: 20),
+                  Icon(Icons.delete),
+                  SizedBox(width: 10),
+                  Text('Delete', style: TextStyle(color: Colors.white)),
+                ],
+              ),
+            ),
+            secondaryBackground: Container(
+              color: Colors.blueAccent,
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.only(left: 20.0),
+              child: const Row(
+                children: [
+                  SizedBox(width: 10),
+                  Text('Rename', style: TextStyle(color: Colors.white)),
+                  SizedBox(width: 10),
+                  Icon(Icons.edit),
+                ],
+              ),
+            ),
+            onDismissed: (direction) {
+              if (direction == DismissDirection.startToEnd) {
+                // Delete room
+                _deleteRoom(room);
+              } else {
+                // Rename room
+                _renameRoom(context, room);
+              }
             },
+            child: RoomCard(
+              roomName: room,
+              roomDescription: 'The description of $room',
+              selected: isSelected,
+              onTap: () {
+                _showOptions(context, room);
+              },
+            ),
           );
         }).toList(),
         ElevatedButton(
@@ -119,7 +176,7 @@ class _MeetingRoomListState extends State<MeetingRoomList> {
             ),
           ),
           child: const Text(
-            'Add New Room',
+            'New Room',
             style: TextStyle(color: Colors.black),
           ),
         ),
@@ -149,7 +206,8 @@ class _MeetingRoomListState extends State<MeetingRoomList> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
-                          'You\'ve selected "I need $roomName immediately".'),
+                        'You\'ve selected "I need $roomName immediately".',
+                      ),
                     ),
                   );
                 },
@@ -198,6 +256,62 @@ class _MeetingRoomListState extends State<MeetingRoomList> {
       roomSelections[newRoomName] = false;
     });
   }
+
+  void _deleteRoom(String roomName) {
+    if (meetingRooms.length > 1) {
+      setState(() {
+        meetingRooms.remove(roomName);
+        roomSelections.remove(roomName);
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Cannot delete all rooms.'),
+        ),
+      );
+    }
+  }
+
+  void _renameRoom(BuildContext context, String roomName) {
+    TextEditingController controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Rename Room'),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(hintText: 'Enter new room name'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                String newName = controller.text.trim();
+                if (newName.isNotEmpty && newName != roomName) {
+                  Navigator.pop(context);
+                  setState(() {
+                    int index = meetingRooms.indexOf(roomName);
+                    if (index != -1) {
+                      meetingRooms[index] = newName;
+                      roomSelections[newName] =
+                          roomSelections.remove(roomName)!;
+                    }
+                  });
+                }
+              },
+              child: const Text('Rename'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 class MinutesDialog extends StatelessWidget {
@@ -205,10 +319,10 @@ class MinutesDialog extends StatelessWidget {
   final Function(String, int) onSelected;
 
   const MinutesDialog({
-    super.key,
+    Key? key,
     required this.roomName,
     required this.onSelected,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -264,12 +378,12 @@ class RoomCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const RoomCard({
-    super.key,
+    Key? key,
     required this.roomName,
     required this.roomDescription,
     required this.selected,
     required this.onTap,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -281,13 +395,13 @@ class RoomCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.0),
           color: selected
-              ? const Color.fromARGB(255, 132, 172, 241).withOpacity(0.8)
+              ? const Color.fromARGB(255, 7, 161, 222).withOpacity(0.8)
               : Colors.white,
           boxShadow: [
             BoxShadow(
               color: selected
-                  ? const Color.fromARGB(255, 102, 156, 249).withOpacity(0.4)
-                  : const Color.fromARGB(255, 202, 199, 199).withOpacity(0.2),
+                  ? const Color.fromARGB(255, 223, 78, 78).withOpacity(0.4)
+                  : const Color.fromARGB(255, 7, 161, 222).withOpacity(0.2),
               spreadRadius: 2,
               blurRadius: 8,
               offset: const Offset(0, 4),
@@ -304,8 +418,8 @@ class RoomCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: selected
-                      ? const Color.fromARGB(255, 132, 216, 203)
-                      : const Color.fromARGB(255, 133, 251, 157),
+                      ? const Color.fromARGB(255, 245, 85, 49)
+                      : const Color.fromARGB(255, 7, 161, 222),
                 ),
                 child: Icon(
                   Icons.meeting_room,
@@ -356,7 +470,7 @@ class RoomCard extends StatelessWidget {
                       )
                     : Icon(
                         Icons.circle,
-                        color: const Color.fromARGB(255, 24, 121, 9),
+                        color: const Color.fromARGB(255, 7, 161, 222),
                         size: 24,
                         key: UniqueKey(),
                       ),

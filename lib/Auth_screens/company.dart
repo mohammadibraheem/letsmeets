@@ -5,11 +5,13 @@ class CompanyNamePage extends StatefulWidget {
   const CompanyNamePage({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _CompanyNamePageState createState() => _CompanyNamePageState();
 }
 
 class _CompanyNamePageState extends State<CompanyNamePage> {
-  final TextEditingController _companyNameController = TextEditingController();
+  final TextEditingController _companyNameController =
+      TextEditingController(text: "wosul");
   bool _isLoading = false;
 
   void _submitForm() {
@@ -20,7 +22,7 @@ class _CompanyNamePageState extends State<CompanyNamePage> {
     String companyName = _companyNameController.text.trim();
 
     // Simulate company name verification process
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 1), () {
       setState(() {
         _isLoading = false;
       });
@@ -33,7 +35,12 @@ class _CompanyNamePageState extends State<CompanyNamePage> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Invalid company name'),
+            content: Text(
+              'Invalid company name',
+              style: TextStyle(color: Colors.black),
+            ),
+            backgroundColor:
+                Colors.red, // Changing the color to red for the SnackBar
           ),
         );
       }
@@ -43,10 +50,55 @@ class _CompanyNamePageState extends State<CompanyNamePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Enter Company Name'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(120.0),
+        child: AppBar(
+          backgroundColor: Colors
+              .blueGrey, // Changing the background color of the AppBar to blueGrey
+          elevation: 0,
+          flexibleSpace: Stack(
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.blue, // Gradient color 1
+                      Colors.lightBlueAccent, // Gradient color 2
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+              ),
+              const Positioned(
+                bottom: 10.0,
+                left: 20.0,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Welcome to',
+                      style: TextStyle(
+                        color: Colors.white, // Changing the text color to white
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 4.0),
+                    Text(
+                      'Your Company',
+                      style: TextStyle(
+                        color: Colors.white, // Changing the text color to white
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -57,18 +109,27 @@ class _CompanyNamePageState extends State<CompanyNamePage> {
               controller: _companyNameController,
               decoration: InputDecoration(
                 labelText: 'Company Name',
-                border: OutlineInputBorder(
+                labelStyle: const TextStyle(color: Colors.black),
+                focusedBorder: OutlineInputBorder(
+                  borderSide:
+                      const BorderSide(color: Colors.blue), // Border color
                   borderRadius: BorderRadius.circular(15.0),
                 ),
               ),
             ),
             const SizedBox(height: 20.0),
             _isLoading
-                ? const CircularProgressIndicator.adaptive() // Show progress indicator while processing
+                ? const CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors
+                          .blue, // Changing the color to blue for the CircularProgressIndicator
+                    ),
+                  )
                 : ElevatedButton(
                     onPressed: _submitForm,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: Colors
+                          .blue, // Changing the color to blue for the ElevatedButton
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),
                       ),
@@ -80,6 +141,8 @@ class _CompanyNamePageState extends State<CompanyNamePage> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          color:
+                              Colors.white, // Changing the text color to white
                         ),
                       ),
                     ),

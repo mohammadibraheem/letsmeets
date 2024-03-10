@@ -8,15 +8,18 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _usernameController =
+      TextEditingController(text: "test");
+  final TextEditingController _passwordController =
+      TextEditingController(text: "1234");
   bool _rememberMe = false;
 
   void _login() {
     String username = _usernameController.text;
     String password = _passwordController.text;
     if (username == 'test' && password == '1234') {
-      Navigator.pushReplacementNamed(context, '/home');
+      //Navigator.pushReplacementNamed(context, '/home');
+      Navigator.of(context).pushNamedAndRemoveUntil('/home', (route) => false);
     } else {
       showDialog(
         context: context,
@@ -41,11 +44,45 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Background color
-      appBar: AppBar(
-        title: const Text('Login'),
-        backgroundColor: Colors.transparent,
-        elevation: 0, // App bar color
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(120.0),
+        child: AppBar(
+          backgroundColor: Colors.blueGrey, // Background color of the AppBar
+          elevation: 0,
+          flexibleSpace: Stack(
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.blue, // Gradient color 1
+                      Colors.lightBlueAccent, // Gradient color 2
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+              ),
+              const Positioned(
+                bottom: 10.0,
+                left: 20.0,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Login', // Title for the AppBar
+                      style: TextStyle(
+                        color: Colors.white, // Text color
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -117,11 +154,12 @@ class _LoginPageState extends State<LoginPage> {
                             });
                           },
                           fillColor: MaterialStateProperty.resolveWith<Color>(
-                              (states) => Colors.blue),
+                              (states) =>
+                                  const Color.fromARGB(255, 7, 161, 222)),
                         ),
                         const Text(
                           'Remember Me',
-                          style: TextStyle(color: Colors.black),
+                          style: TextStyle(color: Colors.blueAccent),
                         ),
                       ],
                     ),
@@ -133,7 +171,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: const Text(
                       'Forgot Password?',
                       style: TextStyle(
-                        color: Colors.blue,
+                        color: Color.fromARGB(255, 7, 161, 222),
                       ),
                     ),
                   ),
@@ -143,7 +181,7 @@ class _LoginPageState extends State<LoginPage> {
               ElevatedButton(
                 onPressed: _login,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue, // Button color
+                  backgroundColor: Colors.blueAccent, // Button color
                   textStyle: const TextStyle(color: Colors.white), // Text color
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30.0),
@@ -154,9 +192,9 @@ class _LoginPageState extends State<LoginPage> {
                   child: Text(
                     'Login',
                     style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                 ),
               ),
@@ -168,7 +206,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: const Text(
                   'Sign Up',
                   style: TextStyle(
-                    color: Colors.blue,
+                    color: Colors.blueAccent,
                     fontSize: 16,
                   ),
                 ),
