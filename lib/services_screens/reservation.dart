@@ -80,65 +80,73 @@ class _ReservationPageState extends State<ReservationPage> {
           ),
           SizedBox(
             width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.width * 1.2,
+            height: MediaQuery.of(context).size.width * 1.00467,
             child: Stack(
               children: [
                 Align(
-                  alignment: Alignment.center,
+                  alignment: Alignment.topCenter,
                   child: Container(
                     decoration: BoxDecoration(
                         color: Colors.blue,
                         borderRadius: BorderRadius.circular(12)),
                     width: MediaQuery.of(context).size.width * 0.95,
-                    height: MediaQuery.of(context).size.width * 0.95,
+                    height: MediaQuery.of(context).size.width * 0.9,
                   ),
                 ),
                 Align(
-                  alignment: Alignment.center,
-                  child: TableCalendar(
-                    //calendarController: _calendarController,
-                    focusedDay: _focusedDay,
-                    firstDay: _firstDay,
-                    lastDay: _lastDay,
-                    calendarFormat: CalendarFormat.month,
-                    onFormatChanged: (format) {},
-                    startingDayOfWeek: StartingDayOfWeek.sunday,
-                    headerStyle: const HeaderStyle(
-                      formatButtonVisible: false,
-                    ),
-                    selectedDayPredicate: (day) {
-                      return isSameDay(selectedDate, day);
-                    },
-                    onDaySelected: (selectedDay, focusedDay) {
-                      setState(() {
-                        selectedDate = selectedDay;
-                      });
-                    },
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        bottom: 40.0, right: 40.0, left: 40.0),
+                    child: TableCalendar(
+                      //calendarController: _calendarController,
+                      focusedDay: _focusedDay,
+                      firstDay: _firstDay,
+                      lastDay: _lastDay,
+                      calendarFormat: CalendarFormat.month,
 
-                    calendarStyle: CalendarStyle(
-                      tablePadding: const EdgeInsets.all(20),
-                      todayDecoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(0.2),
-                        shape: BoxShape.circle,
+                      onFormatChanged: (format) {},
+                      startingDayOfWeek: StartingDayOfWeek.sunday,
+                      headerStyle: const HeaderStyle(
+                        formatButtonVisible: false,
                       ),
-                      selectedDecoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(0.4),
-                        shape: BoxShape.circle,
+                      selectedDayPredicate: (day) {
+                        return isSameDay(selectedDate, day);
+                      },
+                      onDaySelected: (selectedDay, focusedDay) {
+                        setState(() {
+                          selectedDate = selectedDay;
+                        });
+                      },
+
+                      calendarStyle: CalendarStyle(
+                        tablePadding: EdgeInsets.zero,
+                        cellPadding: EdgeInsets.zero,
+                        cellMargin: EdgeInsets.zero,
+                        canMarkersOverflow: false,
+                        todayDecoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(0.2),
+                          shape: BoxShape.circle,
+                        ),
+                        selectedDecoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(0.4),
+                          shape: BoxShape.circle,
+                        ),
+                        weekendTextStyle: const TextStyle(color: Colors.red),
                       ),
-                      weekendTextStyle: const TextStyle(color: Colors.red),
+                      daysOfWeekStyle: const DaysOfWeekStyle(
+                        weekendStyle: TextStyle(color: Colors.red),
+                        weekdayStyle: TextStyle(color: Colors.black),
+                      ),
+                      weekendDays: const [
+                        DateTime.friday,
+                        DateTime.saturday
+                      ], // Define Fri and Sat as weekend days
+                      availableCalendarFormats: const {
+                        CalendarFormat.month: 'Month',
+                        CalendarFormat.week: 'Week',
+                      },
                     ),
-                    daysOfWeekStyle: const DaysOfWeekStyle(
-                      weekendStyle: TextStyle(color: Colors.red),
-                      weekdayStyle: TextStyle(color: Colors.black),
-                    ),
-                    weekendDays: const [
-                      DateTime.friday,
-                      DateTime.saturday
-                    ], // Define Fri and Sat as weekend days
-                    availableCalendarFormats: const {
-                      CalendarFormat.month: 'Month',
-                      CalendarFormat.week: 'Week',
-                    },
                   ),
                 ),
               ],
