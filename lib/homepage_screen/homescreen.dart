@@ -162,6 +162,9 @@ class _MeetingRoomListState extends State<MeetingRoomList> {
               onTap: () {
                 _showOptions(context, room);
               },
+              onFreeRoom: () {
+                _freeRoom(room);
+              },
             ),
           );
         }).toList(),
@@ -193,6 +196,16 @@ class _MeetingRoomListState extends State<MeetingRoomList> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              if (roomSelections[roomName] ==
+                  true) // Show button only if the room is selected
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _freeRoom(
+                        roomName); // Call _freeRoom method when the button is pressed
+                  },
+                  child: const Text('Make Room Free'),
+                ),
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
@@ -312,6 +325,12 @@ class _MeetingRoomListState extends State<MeetingRoomList> {
       },
     );
   }
+
+  void _freeRoom(String roomName) {
+    setState(() {
+      roomSelections[roomName] = false;
+    });
+  }
 }
 
 class MinutesDialog extends StatelessWidget {
@@ -376,6 +395,7 @@ class RoomCard extends StatelessWidget {
   final String roomDescription;
   final bool selected;
   final VoidCallback onTap;
+  final VoidCallback onFreeRoom;
 
   const RoomCard({
     Key? key,
@@ -383,6 +403,7 @@ class RoomCard extends StatelessWidget {
     required this.roomDescription,
     required this.selected,
     required this.onTap,
+    required this.onFreeRoom,
   }) : super(key: key);
 
   @override
@@ -462,11 +483,34 @@ class RoomCard extends StatelessWidget {
                 switchInCurve: Curves.easeInOut,
                 switchOutCurve: Curves.easeInOut,
                 child: selected
-                    ? Icon(
-                        Icons.check_circle,
-                        color: const Color.fromARGB(255, 148, 19, 10),
-                        size: 24,
-                        key: UniqueKey(),
+                    ? Row(
+                        children: [
+                          // Button to free the room
+                          ElevatedButton(
+                            onPressed: onFreeRoom,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  const Color.fromARGB(255, 0, 155, 13),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(16),
+                                ),
+                              ),
+                            ),
+                            child: const Text(
+                              'Free Room',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          // Selected icon
+                          Icon(
+                            Icons.check_circle,
+                            color: const Color.fromARGB(255, 148, 19, 10),
+                            size: 24,
+                            key: UniqueKey(),
+                          ),
+                        ],
                       )
                     : Icon(
                         Icons.circle,

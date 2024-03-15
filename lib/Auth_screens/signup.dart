@@ -4,6 +4,7 @@ class SignupPage extends StatefulWidget {
   const SignupPage({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _SignupPageState createState() => _SignupPageState();
 }
 
@@ -66,10 +67,54 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sign Up'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(120.0),
+        child: AppBar(
+          backgroundColor: Colors.blueGrey,
+          elevation: 0,
+          flexibleSpace: Stack(
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.blue,
+                      Colors.lightBlueAccent,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+              ),
+              const Positioned(
+                bottom: 10.0,
+                left: 20.0,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Welcome',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 4.0),
+                    Text(
+                      'Sign up ',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -161,6 +206,7 @@ class _SignupPageState extends State<SignupPage> {
                   'Submit',
                   style: TextStyle(
                     fontSize: 18,
+                    color: Color.fromARGB(255, 255, 255, 255),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
