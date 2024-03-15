@@ -19,6 +19,15 @@ class _SignupPageState extends State<SignupPage> {
   Color _passwordStrengthColor = Colors.transparent;
 
   void _submitForm() {
+    if (_emailController.text.isEmpty ||
+        _usernameController.text.isEmpty ||
+        _phoneNumberController.text.isEmpty ||
+        _passwordController.text.isEmpty ||
+        _reEnterPasswordController.text.isEmpty) {
+      _showErrorDialog("Error", "Please fill in all fields");
+      return;
+    }
+
     if (_passwordController.text != _reEnterPasswordController.text) {
       _showErrorDialog("Error", "Passwords do not match");
       return;
@@ -148,6 +157,12 @@ class _SignupPageState extends State<SignupPage> {
                     borderRadius: BorderRadius.circular(15.0),
                   ),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your username';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 20),
               TextFormField(
@@ -161,6 +176,12 @@ class _SignupPageState extends State<SignupPage> {
                     borderRadius: BorderRadius.circular(15.0),
                   ),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your phone number';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 20),
               TextFormField(
@@ -196,6 +217,12 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
                 obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 20),
               TextFormField(
@@ -208,6 +235,12 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
                 obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please re-enter your password';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 20),
               Row(
