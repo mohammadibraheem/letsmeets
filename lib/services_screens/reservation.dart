@@ -17,6 +17,15 @@ class _ReservationPageState extends State<ReservationPage> {
   int? selectedFromTimeSlot;
   int? selectedToTimeSlot;
 
+  // Sample list of available meeting rooms
+  List<String> availableMeetingRooms = [
+    'Meeting Room 1',
+    'Meeting Room 2',
+    'Meeting Room 3',
+  ];
+
+  String? selectedMeetingRoom; // Define selectedMeetingRoom here
+
   @override
   void initState() {
     super.initState();
@@ -189,32 +198,58 @@ class _ReservationPageState extends State<ReservationPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirm Reservation'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Date: ${selectedDate.toString()}'), // remove zeros
-              Text('From Time: ${(selectedFromTimeSlot! + 8).toString()}:00'),
-              Text('To Time: ${(selectedToTimeSlot! + 8).toString()}:00'),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _confirmReservation();
-                Navigator.of(context).pop();
-              },
-              child: const Text('Confirm'),
-            ),
-          ],
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Confirm Reservation'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Date: ${selectedDate.toString()}'),
+                  Text('From Time: ${(selectedFromTimeSlot! + 8)}:00'),
+                  Text('To Time: ${(selectedToTimeSlot! + 8)}:00'),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Select Meeting Room:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children:
+                        List.generate(availableMeetingRooms.length, (index) {
+                      final room = availableMeetingRooms[index];
+                      return RadioListTile(
+                        title: Text(room),
+                        value: room,
+                        groupValue: selectedMeetingRoom,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedMeetingRoom = value.toString();
+                          });
+                        },
+                      );
+                    }),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _confirmReservation();
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Confirm'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -223,5 +258,9 @@ class _ReservationPageState extends State<ReservationPage> {
   void _confirmReservation() {
     // Perform the reservation confirmation logic here
     print('Reservation confirmed!');
+    print('Date: ${selectedDate.toString()}');
+    print('From Time: ${(selectedFromTimeSlot! + 8)}:00');
+    print('To Time: ${(selectedToTimeSlot! + 8)}:00');
+    print('Selected Meeting Room: $selectedMeetingRoom');
   }
 }
