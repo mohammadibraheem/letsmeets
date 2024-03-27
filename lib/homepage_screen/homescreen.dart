@@ -138,11 +138,16 @@ class _MeetingRoomListState extends State<MeetingRoomList> {
               alignment: Alignment.centerLeft,
               padding: const EdgeInsets.only(left: 20.0),
               child: const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(width: 10),
                   Text('Rename', style: TextStyle(color: Colors.white)),
-                  SizedBox(width: 10),
-                  Icon(Icons.edit),
+                  Row(
+                    children: [
+                      SizedBox(width: 10),
+                      Icon(Icons.edit),
+                      SizedBox(width: 20),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -292,6 +297,8 @@ class _MeetingRoomListState extends State<MeetingRoomList> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Rename Room'),
+          // iconPadding: const EdgeInsets.only(right: 20),
+          //titlePadding: const EdgeInsets.only(right: 20),
           content: TextField(
             controller: controller,
             decoration: const InputDecoration(hintText: 'Enter new room name'),
